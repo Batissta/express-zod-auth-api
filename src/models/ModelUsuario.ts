@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-type TUsuario = {
+export type TUsuario = {
   id: string;
   nome: string;
   email: string;

@@ -1,14 +1,18 @@
 import { Router } from "express";
-import UsuarioRepository from "../models/ModelUsuario";
+import controller from "../controllers/ControllerUsuarios";
+import { middleware } from "../middleware";
 
 const router = Router();
 
-router.route("/").get(async (req, res) => {
-  const users = await UsuarioRepository.find();
-  res.status(200).json({
-    quantidade: users.length,
-    usuarios: users,
-  });
-});
+router.use(middleware);
+
+router
+  .route("/")
+  .get(async (req, res) => {
+    return await controller.listaUsuarios(req, res);
+  })
+  .post(controller.criarUsuario);
+
+router.route("/login").post(controller.login);
 
 export default router;
