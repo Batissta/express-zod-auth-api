@@ -1,4 +1,4 @@
-# 🔒 API Express + Zod + Mongoose
+# 🔒 API Express + Zod + Mongoose + Typescript + JWT
 
 <div align="center">
   
@@ -16,13 +16,15 @@ Esta é uma API desenvolvida para estudos, utilizando TypeScript, Mongoose, dote
 
 </div>
 
-## Tecnologias Utilizadas
+## Bibliotecas nodejs utilizadas
 
 - **Zod**: Biblioteca para validação de dados.
 - **TypeScript**: Superset de JavaScript com tipagem estática.
 - **Express**: Biblioteca nodejs para criar a conexão com o servidor.
 - **Mongoose**: Biblioteca ORM para modelagem e tratamento de dados no MongoDB.
 - **Dotenv**: Gerenciamento de variáveis de ambiente.
+- **Bcrypt**: Criptografia de senhas.
+- **Jsonwebtoken**: Geração de tokens e autorização para rotas específicas.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -51,28 +53,31 @@ Me encontre no **LinkedIn:**<br>
 
    ```bash
    git clone https://github.com/Batissta/express-zod-auth.git
-   cd graphql-mongo-api
+   cd express-zod-auth
    ```
    
 2. **Instale as dependências:**
 
-   ```bash
-   npm install
-   ```
+     ```bash
+     npm install
+     ```
 3. **Configure as variáveis de ambiente:**
      Crie um arquivo `.env` e adicione a seguinte variável:
       ```env
-      MONGO_URI_CONNECTION=sua-conexão-com-seu-banco-de-dados
+      DB_STRING_CONNECTION=sua_string_de_conexão
+      PORT=sua_porta
+      ROUNDS=quantidade_de_vezes_que_a_senha_é_criptografada_em_int_deixe_entre_10_e_13
+      SECRET=seu_segredo
       ```
 4. **Execute o servidor:**
       ```bash
       npm run dev
       ```
-      O servidor estará disponível em http://localhost:4000.
+      O servidor estará disponível na rota que você adicionar ao `.env`.
 
 ## 🤝 Como Contribuir
 Deixa uma estrela no repositório e me siga no Github!<br>
-Além disso, faz conexão comigo no linkedin (está na seção "Autor") e se inscreve no meu canal do youtube: [youtube.com/@Francinaldob](https://www.youtube.com/@Francinaldob)
+Além disso, faz conexão comigo no linkedin (o link está na seção "Autor") e se inscreve no meu canal do youtube: [youtube.com/@Francinaldob](https://www.youtube.com/@Francinaldob)
 
 ## 📄 Licença
 Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
