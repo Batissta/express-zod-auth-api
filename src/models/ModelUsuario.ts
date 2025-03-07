@@ -6,6 +6,8 @@ export type TUsuario = {
   email: string;
   senha: string;
   tipo: "passageiro" | "motorista";
+  viagensId: [string];
+  avaliacoesId: [string];
 };
 
 const userSchema = new mongoose.Schema<TUsuario>({
@@ -14,6 +16,8 @@ const userSchema = new mongoose.Schema<TUsuario>({
   email: { type: String, required: true, unique: true },
   senha: { type: String, required: true },
   tipo: { type: String, default: "passageiro", required: true },
+  viagensId: { type: [String], required: true, default: [] },
+  avaliacoesId: { type: [String], required: true, default: [] },
 });
 
 export default mongoose.model<TUsuario>("usuarios", userSchema);
