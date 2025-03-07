@@ -7,15 +7,20 @@ import { randomUUID } from "node:crypto";
 import env from "../config/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { criarPassageiro } from "../controllers/usuariosTipo/ControllerPassageiro";
 import {
   padronizaResponseUsers,
-  TUserUnsanitized,
-} from "../helpers/sanitizeUserResponse";
+  padronizaResponseUser,
+  TUserUnpadronized,
+} from "../helpers/padronizeUserResponse";
 
 export const criarUsuario = async (req: any, res: any) => {
   try {
-    const zodValidation = validateCriarPayload(req.body);
+    const payload = {
+      ...req.body,
+      viagensId: [],
+      avaliacoesId: [],
+    };
+    const zodValidation = validateCriarPayload(payload);
 
     if (!zodValidation.success)
       return res.status(400).send({
@@ -29,14 +34,23 @@ export const criarUsuario = async (req: any, res: any) => {
       zodValidation.data.senha,
       Number(env.ROUNDS)
     );
-    const usuario = await UsuarioRepository.create({
+
+    const usuarioCriado: TUserUnpadronized = await UsuarioRepository.create({
       id: usuarioId,
       ...zodValidation.data,
     });
-    req.body = {
-      usuarioId: usuarioId,
-    };
-    if (usuario.tipo === "passageiro") return await criarPassageiro(req, res);
+
+    if (usuarioCriado.tipo === "motorista") {
+      req.body = {
+        usuarioId: usuarioId,
+      };
+      return console.log("O motorista tá tirando a carteira");
+    }
+    const userPadronized = padronizaResponseUser(usuarioCriado);
+    res.status(201).json({
+      mensagem: "Usuário criado com sucesso!",
+      usuario: userPadronized.data,
+    });
   } catch (error: unknown) {
     if (error instanceof Error)
       return res.status(400).json({
@@ -103,7 +117,7 @@ export const encontraPeloTipo = async (req: any, res: any) => {
         mensage: "Tipo inválido!",
       });
 
-    const usuariosDoTipo: TUserUnsanitized[] =
+    const usuariosDoTipo: TUserUnpadronized[] =
       await UsuarioRepository.aggregate([
         {
           $lookup: {
