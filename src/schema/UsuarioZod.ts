@@ -26,7 +26,9 @@ export const AtualizarUsuarioZodSchema = z.object({
     .string()
     .min(4, "Sua senha deve conter pelo menos 4 caracteres!")
     .optional(),
-  tipo: z.nativeEnum(Tipos),
+  tipo: z.nativeEnum(Tipos).optional(),
+  viagemId: z.string().startsWith("v.").optional(),
+  avaliacaoId: z.string().startsWith("a.").optional(),
 });
 
 export const LoginUsuarioZodSchema = z.object({
