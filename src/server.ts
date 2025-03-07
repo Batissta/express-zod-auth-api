@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import env from "./config/config";
-import RouteUsuarios from "./routes/RouteUsuario";
+import RouteUsuarios from "./routes/routeUsuario";
 
 const app = express();
 app.use(express.json());
