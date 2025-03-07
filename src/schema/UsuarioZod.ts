@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { TUsuario } from "../models/ModelUsuario";
 
 enum Tipos {
   passageiro = "passageiro",
