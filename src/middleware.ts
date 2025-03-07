@@ -1,4 +1,3 @@
-import { Request } from "express";
 import env from "./config/config";
 import jwt from "jsonwebtoken";
 
