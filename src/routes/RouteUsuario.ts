@@ -1,18 +1,21 @@
 import { Router } from "express";
-import controller from "../controllers/ControllerUsuarios";
+import {
+  listaUsuarios,
+  login,
+  criarUsuario,
+  encontraPeloTipo,
+} from "../controllers/ControllerUsuarios";
+// import { criarPassageiro } from "../controllers/usuariosTipo/ControllerPassageiro";
 import { middleware } from "../middleware";
 
 const router = Router();
 
 router.use(middleware);
 
-router
-  .route("/")
-  .get(async (req, res) => {
-    return await controller.listaUsuarios(req, res);
-  })
-  .post(controller.criarUsuario);
+router.route("/").get(listaUsuarios).post(criarUsuario);
 
-router.route("/login").post(controller.login);
+router.route("/:tipo").get(encontraPeloTipo);
+
+router.route("/login").post(login);
 
 export default router;
