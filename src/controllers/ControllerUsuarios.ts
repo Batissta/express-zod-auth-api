@@ -2,7 +2,9 @@ import {
   validateLoginPayload,
   validateCriarPayload,
 } from "../schema/UsuarioZod";
+import { criarMotorista } from "./controllerMotorista";
 import UsuarioRepository from "../models/ModelUsuario";
+import { listarMotoristas } from "../controllers/controllerMotorista";
 import { randomUUID } from "node:crypto";
 import env from "../config/config";
 import bcrypt from "bcrypt";
@@ -10,17 +12,12 @@ import jwt from "jsonwebtoken";
 import {
   padronizaResponseUsers,
   padronizaResponseUser,
-  TUserUnpadronized,
+  TSchemaUserUnpadronized,
 } from "../helpers/padronizeUserResponse";
 
 export const criarUsuario = async (req: any, res: any) => {
   try {
-    const payload = {
-      ...req.body,
-      viagensId: [],
-      avaliacoesId: [],
-    };
-    const zodValidation = validateCriarPayload(payload);
+    const zodValidation = validateCriarPayload(req.body);
 
     if (!zodValidation.success)
       return res.status(400).send({
@@ -28,6 +25,7 @@ export const criarUsuario = async (req: any, res: any) => {
           "Você enviou algo fora do formato correto, busque a documentação!",
         erros: zodValidation.errors,
       });
+    console.log(zodValidation.data);
 
     const usuarioId = `u.${randomUUID()}`;
     zodValidation.data.senha = await bcrypt.hash(
@@ -35,19 +33,25 @@ export const criarUsuario = async (req: any, res: any) => {
       Number(env.ROUNDS)
     );
 
-    const usuarioCriado: TUserUnpadronized = await UsuarioRepository.create({
-      id: usuarioId,
-      ...zodValidation.data,
-    });
+    const usuarioCriado: TSchemaUserUnpadronized =
+      await UsuarioRepository.create({
+        id: usuarioId,
+        ...zodValidation.data,
+      });
 
     if (usuarioCriado.tipo === "motorista") {
       req.body = {
         usuarioId: usuarioId,
+        veiculo: req.body.veiculo,
       };
-      return console.log("O motorista tá tirando a carteira");
+      return criarMotorista(req, res);
     }
     const userPadronized = padronizaResponseUser(usuarioCriado);
-    res.status(201).json({
+    if (!userPadronized.success)
+      return res.status(400).json({
+        erros: userPadronized.errors,
+      });
+    return res.status(201).json({
       mensagem: "Usuário criado com sucesso!",
       usuario: userPadronized.data,
     });
@@ -116,22 +120,12 @@ export const encontraPeloTipo = async (req: any, res: any) => {
       return res.status(400).json({
         mensage: "Tipo inválido!",
       });
-
-    const usuariosDoTipo: TUserUnpadronized[] =
-      await UsuarioRepository.aggregate([
-        {
-          $lookup: {
-            from: `${tipo}`,
-            localField: "id",
-            foreignField: "usuarioId",
-            as: "info",
-          },
-        },
-      ]);
-    const responsePadronizada = padronizaResponseUsers(usuariosDoTipo);
+    if (tipo == "motoristas") return listarMotoristas(req, res);
+    const passageiros = await UsuarioRepository.find({ tipo: "passageiro" });
+    const passageirosResponse = padronizaResponseUsers(passageiros);
     return res.status(200).json({
-      quantidade: responsePadronizada.length,
-      usuarios: responsePadronizada,
+      quantidade: passageirosResponse.length,
+      pessoas: passageirosResponse,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
