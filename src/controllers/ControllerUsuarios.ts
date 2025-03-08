@@ -25,7 +25,6 @@ export const criarUsuario = async (req: any, res: any) => {
           "Você enviou algo fora do formato correto, busque a documentação!",
         erros: zodValidation.errors,
       });
-    console.log(zodValidation.data);
 
     const usuarioId = `u.${randomUUID()}`;
     zodValidation.data.senha = await bcrypt.hash(
