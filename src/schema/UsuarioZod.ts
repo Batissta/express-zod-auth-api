@@ -10,7 +10,7 @@ export const CriarUsuarioZodSchema = z.object({
     .string()
     .min(2, "O nome deve ter pelo menos 2 caracteres!")
     .max(20, "O nome deve ter no máximo 20 caracteres!"),
-  email: z.string().email("E-mail inválido!"),
+  email: z.string().trim().toLowerCase().email("E-mail inválido!"),
   senha: z.string().min(4, "Sua senha deve conter pelo menos 4 caracteres!"),
   tipo: z.nativeEnum(Tipos),
 });
@@ -21,7 +21,12 @@ export const AtualizarUsuarioZodSchema = z.object({
     .min(2, "O nome deve ter pelo menos 2 caracteres!")
     .max(20, "O nome deve ter no máximo 20 caracteres!")
     .optional(),
-  email: z.string().email("E-mail inválido!").optional(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Formato de e-mail inválido!")
+    .optional(),
   senha: z
     .string()
     .min(4, "Sua senha deve conter pelo menos 4 caracteres!")
@@ -32,7 +37,12 @@ export const AtualizarUsuarioZodSchema = z.object({
 });
 
 export const LoginUsuarioZodSchema = z.object({
-  email: z.string().email("Formato de e-mail inválido!").nonempty(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Formato de e-mail inválido!")
+    .nonempty(),
   senha: z.string().nonempty(),
 });
 
