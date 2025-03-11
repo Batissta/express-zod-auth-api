@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 
 const authRoutes = [
   { route: "/api/usuarios", method: "GET" },
-  { route: "/api/usuarios:id", method: "GET PUT" },
+  { route: "/api/usuarios:id", method: "GET" },
+  { route: "/api/usuarios:id", method: "PUT" },
 ];
 
 export const middleware = async (req: any, res: any, next: any) => {
@@ -26,9 +27,13 @@ export const middleware = async (req: any, res: any, next: any) => {
 
   try {
     const token = authHeader.split(" ")[1];
-    const result = jwt.verify(token, env.SECRET);
-    req.usuarioId = result;
-    next();
+    jwt.verify(token, env.SECRET, (err: unknown, result: any) => {
+      if (err && err instanceof Error)
+        return res.status(401).json({
+          message: "Token inválido!",
+        });
+      next();
+    });
   } catch (error: any) {
     res.status(500).json({ mensagem: error.message });
   }
