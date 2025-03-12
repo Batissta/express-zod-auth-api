@@ -1,26 +1,50 @@
-import { padronizeMotoristasResponse } from "../helpers/padronizeUserResponse";
-import MotoristaRepository from "../models/ModelMotorista";
+import usuarioRepo from "../models/ModelUsuario";
 import { validateCriarMotoristaSchema } from "../schema/MotoristaZod";
+import { validateCriarPayload } from "../schema/UsuarioZod";
+import { randomUUID } from "node:crypto";
+import motoristaRepo from "../helpers/motoristaRepoMethods";
+import motoristaRepos from "../models/ModelMotorista";
 
 export const criarMotorista = async (req: any, res: any) => {
+  const placaEmUso = await motoristaRepos.findOne({
+    veiculo: {
+      placa: req.body.veiculo.placa,
+    },
+  });
+
+  if (placaEmUso)
+    return res
+      .status(409)
+      .json({ mensagem: "Esta placa já está sendo utilizada!" });
+
   try {
-    const result = validateCriarMotoristaSchema(req.body);
-    if (!result.success)
-      res.status(400).json({
-        erros: result.errors,
+    const resultSchemaUsuario = validateCriarPayload(req.body);
+    if (!resultSchemaUsuario.success)
+      return res.status(400).json({
+        erros: resultSchemaUsuario.errors,
+      });
+    console.log(resultSchemaUsuario.data);
+
+    const usuarioId = `u.${randomUUID()}`;
+
+    const resultSchemaMotorista = validateCriarMotoristaSchema({
+      usuarioId,
+      ...req.body,
+    });
+    if (!resultSchemaMotorista.success)
+      return res.status(400).json({
+        erros: resultSchemaMotorista.errors,
       });
 
-    const motorista = await MotoristaRepository.create(result.data);
-
+    await usuarioRepo.create({
+      id: usuarioId,
+      ...resultSchemaUsuario.data,
+    });
+    await motoristaRepo.create(resultSchemaMotorista.data);
     return res.status(201).json({
-      mensagem: "Usuário criado com sucesso!",
-      veiculo: {
-        marca: motorista.veiculo.marca,
-        modelo: motorista.veiculo.modelo,
-        ano: motorista.veiculo.ano,
-        cor: motorista.veiculo.cor,
-        placa: motorista.veiculo.placa,
-      },
+      mensagem: "Motorista criado com sucesso!",
+      usuarioId: resultSchemaMotorista.data?.usuarioId,
+      veiculo: resultSchemaMotorista.data?.veiculo,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
@@ -32,27 +56,16 @@ export const criarMotorista = async (req: any, res: any) => {
 
 export const listarMotoristas = async (req: any, res: any) => {
   try {
-    const usuarios = await MotoristaRepository.aggregate([
-      {
-        $lookup: {
-          from: `usuarios`,
-          localField: "usuarioId",
-          foreignField: "id",
-          as: "usuario",
-        },
-      },
-    ]);
-    if (!(usuarios.length > 0))
+    const motoristas = await motoristaRepo.findAll();
+    if (!motoristas)
       return res.status(200).json({
-        quantidade: usuarios.length,
-        usuarios: [],
+        quantidade: 0,
+        motoristas: [],
       });
 
-    const usuariosResponse = padronizeMotoristasResponse(usuarios);
-
     return res.status(200).json({
-      quantidade: usuariosResponse.length,
-      usuarios: usuariosResponse,
+      quantidade: motoristas.length,
+      motoristas: motoristas,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
