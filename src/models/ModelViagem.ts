@@ -25,3 +25,5 @@ const viagemSchema = new mongoose.Schema({
   origem: { type: String, required: true },
   destino: { type: String, required: true },
 });
+
+export default mongoose.model<TViagem>("viagens", viagemSchema);
