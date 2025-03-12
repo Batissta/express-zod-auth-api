@@ -84,5 +84,5 @@ Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para d
 
 ---
 
-**Made by _[Francinaldo Batista]_**  
+**Made by _Francinaldo Batista_**  
 
