@@ -1,20 +1,22 @@
 import { Router } from "express";
 import {
-  listaUsuarios,
+  createUser,
+  findById,
+  findByType,
+  findUsers,
   login,
-  criarUsuario,
-  encontraPeloTipo,
 } from "../controllers/ControllerUsuarios";
-// import { criarPassageiro } from "../controllers/usuariosTipo/ControllerPassageiro";
 import { middleware } from "../middleware";
 
 const router = Router();
 
 router.use(middleware);
 
-router.route("/").get(listaUsuarios).post(criarUsuario);
+router.route("/").get(findUsers).post(createUser);
 
-router.route("/:tipo").get(encontraPeloTipo);
+router.route("/:id").get(findById);
+
+router.route("/:tipo").get(findByType);
 
 router.route("/login").post(login);
 
