@@ -2,14 +2,12 @@ import env from "./config/config";
 import jwt from "jsonwebtoken";
 
 const authRoutes = [
-  { route: "/api/usuarios", method: "GET" },
+  // { route: "/api/usuarios", method: "GET" },
   { route: "/api/usuarios:id", method: "GET" },
   { route: "/api/usuarios:id", method: "PUT" },
 ];
 
 export const middleware = async (req: any, res: any, next: any) => {
-  // if (req.method !== "PUT") return next();
-
   const IsAprivateRoute = authRoutes.some((authRoutesObject) => {
     return (
       authRoutesObject.route == req.originalUrl &&
