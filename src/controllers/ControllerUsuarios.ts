@@ -2,9 +2,8 @@ import {
   validateLoginPayload,
   validateCriarPayload,
 } from "../schema/UsuarioZod";
-import { criarMotorista } from "./controllerMotorista";
 import UsuarioRepository from "../models/ModelUsuario";
-import { listarMotoristas } from "../controllers/controllerMotorista";
+import { listarMotoristas, criarMotorista } from "./controllerMotorista";
 import { randomUUID } from "node:crypto";
 import env from "../config/config";
 import bcrypt from "bcrypt";
@@ -13,9 +12,22 @@ import {
   padronizaResponseUsers,
   padronizaResponseUser,
   TSchemaUserUnpadronized,
-} from "../helpers/padronizeUserResponse";
+} from "../helpers/padronizeUsuario";
 
-export const criarUsuario = async (req: any, res: any) => {
+import usuarioRepo from "../helpers/usuarioRepoMethods";
+import motoristaRepo from "../helpers/motoristaRepoMethods";
+
+// o usuário está sendo criado mesmo sem os dados de motorista estarem corretos.
+// devo retornar uma mensagem ajustada caso já exista um usuário com o mesmo e-mail
+// desacoplar esse código é uma necessidade!
+
+export const createUser = async (req: any, res: any) => {
+  const emailEmUso = await UsuarioRepository.findOne({ email: req.body.email });
+  if (emailEmUso)
+    return res
+      .status(409)
+      .json({ mensagem: "Este e-mail já está sendo utilizado!" });
+  if (req.body.tipo === "motorista") return criarMotorista(req, res);
   try {
     const zodValidation = validateCriarPayload(req.body);
 
@@ -38,13 +50,6 @@ export const criarUsuario = async (req: any, res: any) => {
         ...zodValidation.data,
       });
 
-    if (usuarioCriado.tipo === "motorista") {
-      req.body = {
-        usuarioId: usuarioId,
-        veiculo: req.body.veiculo,
-      };
-      return criarMotorista(req, res);
-    }
     const userPadronized = padronizaResponseUser(usuarioCriado);
     if (!userPadronized.success)
       return res.status(400).json({
@@ -62,17 +67,20 @@ export const criarUsuario = async (req: any, res: any) => {
   }
 };
 
-export const listaUsuarios = async (req: any, res: any) => {
+export const findUsers = async (req: any, res: any) => {
   try {
-    const users = await UsuarioRepository.find();
+    const passageiros = await usuarioRepo.find({ tipo: "passageiro" });
+    const motoristas = await motoristaRepo.findAll();
     res.status(200).json({
-      quantidade: users.length,
-      usuarios: users,
+      quantidadePassageiros: passageiros.length,
+      passageiros: passageiros,
+      quantidadeMotoristas: motoristas.length,
+      motoristas: motoristas,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
       return res.status(400).json({
-        mensage: error.message,
+        mensagem: error.message,
       });
   }
 };
@@ -112,7 +120,7 @@ export const login = async (req: any, res: any) => {
   }
 };
 
-export const encontraPeloTipo = async (req: any, res: any) => {
+export const findByType = async (req: any, res: any) => {
   try {
     const { tipo } = req.params;
     if (!(tipo == "passageiros" || tipo == "motoristas"))
@@ -125,6 +133,26 @@ export const encontraPeloTipo = async (req: any, res: any) => {
     return res.status(200).json({
       quantidade: passageirosResponse.length,
       pessoas: passageirosResponse,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      return res.status(400).json({
+        mensage: error.message,
+      });
+  }
+};
+
+export const findById = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const user = await UsuarioRepository.find({ id });
+    if (!user)
+      return res.status(404).json({
+        message: "Usuário não encontrado!",
+      });
+    // const passageirosResponse = padronizaResponseUser(user);
+    return res.status(200).json({
+      pessoas: user,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
