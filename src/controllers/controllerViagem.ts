@@ -3,7 +3,6 @@ import motoristaRepo from "../helpers/motoristaRepoMethods";
 import viagemRepository from "../models/modelViagem";
 import { randomUUID } from "node:crypto";
 import { validateCriarViagem } from "../validations/viagemZod";
-import modelUsuario from "../models/modelUsuario";
 
 export const findViagens = async (req: any, res: any) => {
   try {
@@ -62,41 +61,20 @@ export const createViagem = async (req: any, res: any) => {
   }
 };
 
-/*
-{
-  nome: "a",
-  avaliacao: 5.0,
-  veiculo: {
-    ...
-  },
-  viagens: [
-    {},
-    {},
-    {},
-    {}
-  ]
-}
-*/
-
-export const queryFindByMotoristaId = async (id: string) => {
+export const queryFindByMotoristaId = async (motoristaId: string) => {
   // erro aqui. O motorista existe, mas não é encontrado
   try {
-    const motoristaIsValid = await motoristaRepo.auxQueryFindById(id);
-    console.log(motoristaIsValid);
-
+    const motoristaIsValid = await motoristaRepo.auxQueryFindById(motoristaId);
     if (!motoristaIsValid) return "ID de motorista inválido!";
-    const motoristaViagens = await viagemRepository.aggregate([
-      {
-        $lookup: {
-          from: "motoristas",
-          localField: "usuariosId",
-          foreignField: "motoristaId",
-          as: "motorista",
-        },
-      },
-    ]);
+    const motoristaViagens = await viagemRepository.find({ motoristaId });
+    console.log(motoristaViagens[0]);
 
-    return motoristaViagens;
+    const motoristaResponse = {
+      ...motoristaIsValid,
+      viagens: motoristaViagens,
+    };
+
+    return motoristaResponse;
   } catch (error: unknown) {
     if (error instanceof Error) return error.message;
   }
