@@ -17,13 +17,16 @@ import usuarioRepo from "../helpers/usuarioRepoMethods";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
 
 export const createUser = async (req: any, res: any) => {
-  const emailEmUso = await UsuarioRepository.findOne({ email: req.body.email });
-  if (emailEmUso)
-    return res
-      .status(409)
-      .json({ mensagem: "Este e-mail já está sendo utilizado!" });
-  if (req.body.tipo === "motorista") return criarMotorista(req, res);
   try {
+    const emailEmUso = await UsuarioRepository.findOne({
+      email: req.body.email,
+    });
+    if (emailEmUso && emailEmUso.nome)
+      return res
+        .status(409)
+        .json({ mensagem: "Este e-mail já está sendo utilizado!" });
+
+    if (req.body.tipo === "motorista") return criarMotorista(req, res);
     const zodValidation = validateCriarPayload(req.body);
 
     if (!zodValidation.success)
