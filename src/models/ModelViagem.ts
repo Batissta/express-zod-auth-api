@@ -4,7 +4,7 @@ export type TViagem = {
   id: string;
   motoristaId: string;
   passageirosId: [string];
-  data: Date;
+  data: String;
   hora: {
     horas: number;
     minutos: number;
@@ -13,11 +13,11 @@ export type TViagem = {
   destino: string;
 };
 
-const viagemSchema = new mongoose.Schema({
-  id: { type: String, required: true },
-  motoristaId: { type: String, required: true },
+const viagemSchema = new mongoose.Schema<TViagem>({
+  id: { type: String, required: true, unique: true },
+  motoristaId: { type: String, ref: "motoristas", required: true },
   passageirosId: { type: [String], default: [] },
-  data: { type: Date, required: true },
+  data: { type: String, required: true },
   hora: {
     horas: { type: Number, required: true },
     minutos: { type: Number, required: true },
