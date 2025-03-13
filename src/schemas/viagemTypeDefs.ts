@@ -1,13 +1,16 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
-  type Usuario {
-    nome: String
-  }
-
   type Hora {
     horas: Int
     minutos: Int
+  }
+
+  type Veiculo {
+    marca: String
+    modelo: String
+    placa: String
+    cor: String
   }
 
   type Viagem {
@@ -21,8 +24,22 @@ export const typeDefs = gql`
     status: String
   }
 
+  type ViagemResponse {
+    origem: String
+    destino: String
+    status: String
+    data: String
+    hora: Hora
+  }
+
+  type responseMotoristaViagens {
+    nome: String
+    veiculo: Veiculo
+    viagens: [ViagemResponse]
+  }
+
   type Query {
-    motoristaViagens(motoristaId: String): String
+    motoristaViagens(motoristaId: String): responseMotoristaViagens
     findAllViagens: [Viagem]
   }
 `;
