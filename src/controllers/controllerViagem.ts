@@ -1,7 +1,7 @@
 import usuarioRepository from "../models/modelUsuario";
 import viagemRepository from "../models/modelViagem";
-import { validateCriarViagem } from "../schema/viagemZod";
 import { randomUUID } from "node:crypto";
+import { validateCriarViagem } from "../validations/viagemZod";
 
 export const findViagens = async (req: any, res: any) => {
   try {
@@ -19,15 +19,6 @@ export const findViagens = async (req: any, res: any) => {
 };
 
 export const createViagem = async (req: any, res: any) => {
-  const motoristaIsValid = await usuarioRepository.findOne({
-    id: req.body.motoristaId,
-    tipo: "motorista",
-  });
-
-  if (!motoristaIsValid?.nome)
-    return res.status(404).json({
-      message: "ID de motorista inválido!",
-    });
   try {
     const result = validateCriarViagem(req.body);
     if (!result.success)
@@ -35,16 +26,28 @@ export const createViagem = async (req: any, res: any) => {
         errors: result.errors,
       });
 
-    const id = `${result.data.motoristaId}.${result.data.data}.${result.data.hora.horas}:${result.data.hora.minutos}`;
-    const viagemIsValid = await viagemRepository.findOne({ id });
-    if (viagemIsValid?.motoristaId)
-      return res.status(409).json({
-        message: "Esse motorista já possui uma viagem no mesmo dia e horário!",
-      });
+    const id = `v.${randomUUID()}`;
+
     const novaViagem = await viagemRepository.create({
       id,
       ...result.data,
     });
+
+    if (result.data.motoristaId) {
+      const motorista = await usuarioRepository.findOne({
+        id: result.data.motoristaId,
+      });
+      if (!motorista?.nome)
+        return res.status(404).json({
+          message: "O motorista não foi encontrado!",
+        });
+      motorista.viagensId.push(id);
+      await motorista.save();
+    }
+
+    if (!novaViagem.data)
+      throw new Error("Um erro ocorreu na validação dos dados.");
+
     return res.status(201).json({
       message: "Viagem criada com sucesso!",
       viagem: novaViagem,
@@ -55,4 +58,35 @@ export const createViagem = async (req: any, res: any) => {
         message: error.message,
       });
   }
+};
+
+export const queryFindByMotoristaId = async (id: string) => {
+  // erro aqui. O motorista existe, mas não é encontrado
+  const motoristaIsValid = await usuarioRepository.findOne({
+    id,
+  });
+  console.log(motoristaIsValid);
+
+  if (!motoristaIsValid?.nome) return "ID de motorista inválido!";
+  try {
+    const motoristaViagens = await viagemRepository.aggregate([
+      {
+        $lookup: {
+          from: "motoristas",
+          localField: "usuariosId",
+          foreignField: "motoristaId",
+          as: "motorista",
+        },
+      },
+    ]);
+    console.log(motoristaViagens);
+
+    return motoristaViagens;
+  } catch (error: unknown) {
+    if (error instanceof Error) return error.message;
+  }
+};
+
+export const findAllViagens = async () => {
+  return await viagemRepository.find();
 };
