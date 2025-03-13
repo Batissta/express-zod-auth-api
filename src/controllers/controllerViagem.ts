@@ -23,7 +23,8 @@ export const createViagem = async (req: any, res: any) => {
     id: req.body.motoristaId,
     tipo: "motorista",
   });
-  if (!motoristaIsValid)
+
+  if (!motoristaIsValid?.nome)
     return res.status(404).json({
       message: "ID de motorista inválido!",
     });
@@ -33,8 +34,15 @@ export const createViagem = async (req: any, res: any) => {
       return res.status(400).json({
         errors: result.errors,
       });
+
+    const id = `${result.data.motoristaId}.${result.data.data}.${result.data.hora.horas}:${result.data.hora.minutos}`;
+    const viagemIsValid = await viagemRepository.findOne({ id });
+    if (viagemIsValid?.motoristaId)
+      return res.status(409).json({
+        message: "Esse motorista já possui uma viagem no mesmo dia e horário!",
+      });
     const novaViagem = await viagemRepository.create({
-      id: `${req.body.motoristaId}.${req.body.data}.${req.body.hora.horas}:${req.body.hora.minutos}`,
+      id,
       ...result.data,
     });
     return res.status(201).json({
