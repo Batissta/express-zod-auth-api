@@ -1,6 +1,6 @@
 import usuarioRepo from "../models/modelUsuario";
-import { validateCriarMotoristaSchema } from "../schema/motoristaZod";
-import { validateCriarPayload } from "../schema/usuarioZod";
+import { validateCriarMotoristaSchema } from "../validations/motoristaZod";
+import { validateCriarPayload } from "../validations/usuarioZod";
 import { randomUUID } from "node:crypto";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
 import motoristaRepos from "../models/modelMotorista";
