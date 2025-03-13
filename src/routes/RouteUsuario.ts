@@ -5,7 +5,7 @@ import {
   findByType,
   findUsers,
   login,
-} from "../controllers/ControllerUsuarios";
+} from "../controllers/controllerUsuario";
 import { middleware } from "../middleware";
 
 const router = Router();
@@ -16,7 +16,7 @@ router.route("/").get(findUsers).post(createUser);
 
 router.route("/:id").get(findById);
 
-router.route("/:tipo").get(findByType);
+router.route("/tipo/:tipo").get(findByType);
 
 router.route("/login").post(login);
 
