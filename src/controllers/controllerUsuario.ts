@@ -16,10 +16,6 @@ import {
 import usuarioRepo from "../helpers/usuarioRepoMethods";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
 
-// o usuário está sendo criado mesmo sem os dados de motorista estarem corretos.
-// devo retornar uma mensagem ajustada caso já exista um usuário com o mesmo e-mail
-// desacoplar esse código é uma necessidade!
-
 export const createUser = async (req: any, res: any) => {
   const emailEmUso = await UsuarioRepository.findOne({ email: req.body.email });
   if (emailEmUso)
