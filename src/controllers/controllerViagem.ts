@@ -1,6 +1,6 @@
 import usuarioRepository from "../models/modelUsuario";
 import viagemRepository from "../models/modelViagem";
-import { validateCriarViagem } from "../schema/viagemSchema";
+import { validateCriarViagem } from "../schema/viagemZod";
 import { randomUUID } from "node:crypto";
 
 export const findViagens = async (req: any, res: any) => {
