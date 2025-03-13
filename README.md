@@ -2,7 +2,7 @@
 
 <div align="center">
   
-Esta é uma API desenvolvida para estudos, utilizando TypeScript, Mongoose, dotenv, Zod, Bcrypt, Jsonwebtoken e futuramente adicionarei mais tecnologias. A API gerencia essas entidades principais: `Usuarios`, `Passageiros`, `Motoristas`, `Avaliações` e `Viagens`.
+Esta é uma API desenvolvida para estudos, utilizando TypeScript, Mongoose, dotenv, Zod, Bcrypt, Jsonwebtoken e futuramente adicionarei mais tecnologias. A API gerencia essas entidades principais: `Usuarios`, `Motoristas`, `Avaliações` e `Viagens`.
 
 
 ![Zod](https://img.shields.io/badge/Zod-000000?style=for-the-badge&logo=Zod)
