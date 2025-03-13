@@ -12,7 +12,7 @@ import {
   padronizaResponseUsers,
   padronizaResponseUser,
   TSchemaUserUnpadronized,
-} from "../helpers/padronizeUsuario";
+} from "../helpers/padronizers/padronizeUsuario";
 import usuarioRepo from "../helpers/usuarioRepoMethods";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
 
