@@ -1,9 +1,9 @@
-import usuarioRepo from "../models/ModelUsuario";
-import { validateCriarMotoristaSchema } from "../schema/MotoristaZod";
-import { validateCriarPayload } from "../schema/UsuarioZod";
+import usuarioRepo from "../models/modelUsuario";
+import { validateCriarMotoristaSchema } from "../schema/motoristaZod";
+import { validateCriarPayload } from "../schema/usuarioZod";
 import { randomUUID } from "node:crypto";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
-import motoristaRepos from "../models/ModelMotorista";
+import motoristaRepos from "../models/modelMotorista";
 
 export const criarMotorista = async (req: any, res: any) => {
   const placaEmUso = await motoristaRepos.findOne({
@@ -23,7 +23,6 @@ export const criarMotorista = async (req: any, res: any) => {
       return res.status(400).json({
         erros: resultSchemaUsuario.errors,
       });
-    console.log(resultSchemaUsuario.data);
 
     const usuarioId = `u.${randomUUID()}`;
 

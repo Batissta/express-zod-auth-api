@@ -1,4 +1,4 @@
-import ModelMotorista from "../models/ModelMotorista";
+import ModelMotorista from "../models/modelMotorista";
 import {
   padronizaMotorista,
   padronizaMotoristas,

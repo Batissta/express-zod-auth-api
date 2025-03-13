@@ -1,4 +1,4 @@
-import { veiculoSchema } from "../schema/MotoristaZod";
+import { veiculoSchema } from "../schema/motoristaZod";
 import { schemaUserPadronized } from "./padronizeUsuario";
 import { z } from "zod";
 

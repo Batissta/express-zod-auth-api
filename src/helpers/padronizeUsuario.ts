@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { veiculoSchema } from "../schema/MotoristaZod";
+import { veiculoSchema } from "../schema/motoristaZod";
 
 export const schemaUserPadronized = z.object({
   nome: z.string(),

@@ -1,4 +1,4 @@
-import ModelUsuario from "../models/ModelUsuario";
+import ModelUsuario from "../models/modelUsuario";
 import { padronizaResponseUsers } from "./padronizeUsuario";
 
 export const find = async (payload: any) => {
