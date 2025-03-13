@@ -1,7 +1,7 @@
 import ModelMotorista from "../models/modelMotorista";
 import {
-  padronizaMotorista,
   padronizaMotoristas,
+  padronizaMotorista,
   TypeMotoristaNaoPadronizado,
 } from "./padronizeMotorista";
 
@@ -33,8 +33,33 @@ export const create = async (payload: any) => {
   return padronizaMotorista(motorista);
 };
 
+export const auxQueryFindById = async (id: any) => {
+  try {
+    const motorista: TypeMotoristaNaoPadronizado | any =
+      await ModelMotorista.aggregate([
+        {
+          $match: {
+            usuarioId: id,
+          },
+        },
+        {
+          $lookup: {
+            from: `usuarios`,
+            localField: "usuarioId",
+            foreignField: "id",
+            as: "usuario",
+          },
+        },
+      ]);
+    return padronizaMotorista(motorista[0]).data;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default {
   findAll,
   create,
   findOne,
+  auxQueryFindById,
 };
