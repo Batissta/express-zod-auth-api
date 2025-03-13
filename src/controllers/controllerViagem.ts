@@ -62,19 +62,14 @@ export const createViagem = async (req: any, res: any) => {
 };
 
 export const queryFindByMotoristaId = async (motoristaId: string) => {
-  // erro aqui. O motorista existe, mas não é encontrado
   try {
     const motoristaIsValid = await motoristaRepo.auxQueryFindById(motoristaId);
     if (!motoristaIsValid) return "ID de motorista inválido!";
     const motoristaViagens = await viagemRepository.find({ motoristaId });
-    console.log(motoristaViagens[0]);
-
-    const motoristaResponse = {
+    return {
       ...motoristaIsValid,
       viagens: motoristaViagens,
     };
-
-    return motoristaResponse;
   } catch (error: unknown) {
     if (error instanceof Error) return error.message;
   }
