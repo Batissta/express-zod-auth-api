@@ -1,7 +1,7 @@
 import {
   validateLoginPayload,
   validateCriarPayload,
-} from "../schema/usuarioZod";
+} from "../validations/usuarioZod";
 import UsuarioRepository from "../models/modelUsuario";
 import { listarMotoristas, criarMotorista } from "./controllerMotorista";
 import { randomUUID } from "node:crypto";
