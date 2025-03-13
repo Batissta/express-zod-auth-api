@@ -28,16 +28,9 @@ const startServer = async () => {
   await server.start();
   server.applyMiddleware({ app });
   console.log("GraphQL is running!");
-  // app.listen(env.PORT, () => {
-  //   console.log(
-  //     `🚀 HTTP Server is running!\n📌 Use this API at the follow link: http://localhost:${env.PORT}${server.graphqlPath}`
-  //   );
-  // });
-  app.listen(9999, () => {
+  app.listen(env.PORT, () => {
     console.log(
-      `🚀 HTTP Server is running!\n📌 Use this API at the follow link: http://localhost:${9999}${
-        server.graphqlPath
-      }`
+      `🚀 HTTP Server is running!\n📌 Use this API at the follow link: http://localhost:${env.PORT}${server.graphqlPath}`
     );
   });
 };
