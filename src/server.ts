@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import env from "./config/config";
-import RouteUsuarios from "./routes/routeUsuario";
+import routeUsuarios from "./routes/routeUsuario";
+import routeViagens from "./routes/routeViagem";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use("/api/usuarios", RouteUsuarios);
+app.use("/api/usuarios", routeUsuarios);
+app.use("/api/viagens", routeViagens);
 
 mongoose.connect(env.DB_STRING_CONNECTION).then(() => {
   console.log("🎈 Mongodb database initialized!");
