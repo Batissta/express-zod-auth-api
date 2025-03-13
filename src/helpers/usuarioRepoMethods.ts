@@ -1,5 +1,5 @@
 import ModelUsuario from "../models/modelUsuario";
-import { padronizaResponseUsers } from "./padronizeUsuario";
+import { padronizaResponseUsers } from "./padronizers/padronizeUsuario";
 
 export const find = async (payload: any) => {
   const usuarios = await ModelUsuario.find(payload);

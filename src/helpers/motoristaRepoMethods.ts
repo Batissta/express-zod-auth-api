@@ -3,7 +3,7 @@ import {
   padronizaMotoristas,
   padronizaMotorista,
   TypeMotoristaNaoPadronizado,
-} from "./padronizeMotorista";
+} from "./padronizers/padronizeMotorista";
 
 export const findOne = async (payload: any) => {
   const motorista: TypeMotoristaNaoPadronizado | any =
@@ -33,7 +33,7 @@ export const create = async (payload: any) => {
   return padronizaMotorista(motorista);
 };
 
-export const auxQueryFindById = async (id: any) => {
+export const auxQueryFindById = async (id: string) => {
   try {
     const motorista: TypeMotoristaNaoPadronizado | any =
       await ModelMotorista.aggregate([
@@ -51,6 +51,7 @@ export const auxQueryFindById = async (id: any) => {
           },
         },
       ]);
+
     return padronizaMotorista(motorista[0]).data;
   } catch (error) {
     return false;
