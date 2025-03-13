@@ -6,18 +6,16 @@ import motoristaRepo from "../helpers/motoristaRepoMethods";
 import motoristaRepos from "../models/modelMotorista";
 
 export const criarMotorista = async (req: any, res: any) => {
-  const placaEmUso = await motoristaRepos.findOne({
-    veiculo: {
-      placa: req.body.veiculo.placa,
-    },
-  });
-
-  if (placaEmUso)
-    return res
-      .status(409)
-      .json({ mensagem: "Esta placa já está sendo utilizada!" });
-
   try {
+    const placaEmUso = await motoristaRepos.findOne({
+      "veiculo.placa": req.body.veiculo.placa,
+    });
+
+    if (placaEmUso && placaEmUso.veiculo.placa)
+      return res
+        .status(409)
+        .json({ mensagem: "Esta placa já está sendo utilizada!" });
+
     const resultSchemaUsuario = validateCriarPayload(req.body);
     if (!resultSchemaUsuario.success)
       return res.status(400).json({
@@ -56,7 +54,7 @@ export const criarMotorista = async (req: any, res: any) => {
 export const listarMotoristas = async (req: any, res: any) => {
   try {
     const motoristas = await motoristaRepo.findAll();
-    if (!motoristas)
+    if (motoristas.length === 0)
       return res.status(200).json({
         quantidade: 0,
         motoristas: [],
