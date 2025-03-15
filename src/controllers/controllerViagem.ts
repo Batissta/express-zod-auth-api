@@ -2,7 +2,11 @@ import usuarioRepository from "../models/modelUsuario";
 import motoristaRepo from "../helpers/motoristaRepoMethods";
 import viagemRepository from "../models/modelViagem";
 import { randomUUID } from "node:crypto";
-import { validateCriarViagem } from "../validations/viagemZod";
+import {
+  validateCriarViagem,
+  validateAtualizarViagem,
+  tAtualizarViagemSchema,
+} from "../validations/viagemZod";
 
 export const findViagens = async (req: any, res: any) => {
   try {
@@ -77,4 +81,29 @@ export const queryFindByMotoristaId = async (motoristaId: string) => {
 
 export const findAllViagens = async () => {
   return await viagemRepository.find();
+};
+
+export const mutationUpdateById = async (id: string, args: any) => {
+  const payload = {
+    id,
+    ...args,
+  };
+  const validationResult = validateAtualizarViagem(payload);
+  if (!validationResult.success) {
+    return {
+      error: "Dados inválidos!",
+      viagem: null,
+      details: validationResult.errors,
+    };
+  }
+
+  const updatedViagem = await viagemRepository.findOneAndUpdate(
+    { id: validationResult.data.id },
+    { $set: { ...validationResult.data } },
+    { new: true }
+  );
+  if (!(updatedViagem && updatedViagem.origem))
+    return { error: "Viagem não encontrada!", viagem: null, details: [] };
+
+  return { error: "", viagem: updatedViagem, details: [] };
 };
