@@ -36,6 +36,18 @@ const atualizarViagemSchema = z.object({
     .string()
     .length(10, "A data deve estar nesse formato: dd-mm-aaaa")
     .optional(),
+  hora: z
+    .object({
+      horas: z
+        .number()
+        .min(0, "A hora mínima é 0 que representa 00:00.")
+        .max(23, "A hora máxima é 23 que representa 11PM."),
+      minutos: z
+        .number()
+        .min(0, "O mínimo é 0 em minutos.")
+        .max(59, "O máximo é 59 em minutos."),
+    })
+    .optional(),
   horas: z
     .number()
     .min(0, "A hora mínima é 0 que representa 00:00.")
@@ -74,7 +86,11 @@ export const validateAtualizarViagem = (payload: unknown) => {
       errors: payloadIsValid.error.errors.map((e) => e.message),
       ...payloadIsValid,
     };
-
+  if (payloadIsValid.data.horas)
+    payloadIsValid.data.hora = {
+      horas: payloadIsValid.data.horas,
+      minutos: payloadIsValid.data.minutos ? payloadIsValid.data.minutos : 0,
+    };
   return payloadIsValid;
 };
 

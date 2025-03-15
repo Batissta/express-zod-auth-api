@@ -102,6 +102,7 @@ export const mutationUpdateById = async (id: string, args: any) => {
     { $set: { ...validationResult.data } },
     { new: true }
   );
+
   if (!(updatedViagem && updatedViagem.origem))
     return { error: "Viagem não encontrada!", viagem: null, details: [] };
 
