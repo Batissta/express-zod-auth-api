@@ -25,7 +25,11 @@ const viagemSchema = new mongoose.Schema<TViagem>({
   },
   origem: { type: String, required: true },
   destino: { type: String, required: true },
-  status: { type: String, default: "pendente" },
+  status: {
+    type: String,
+    enum: ["confirmada", "concluida", "pendente"],
+    default: "pendente",
+  },
 });
 
 export default mongoose.model<TViagem>("viagens", viagemSchema);
