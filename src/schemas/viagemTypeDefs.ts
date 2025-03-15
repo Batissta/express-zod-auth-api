@@ -38,8 +38,28 @@ export const typeDefs = gql`
     viagens: [ViagemResponse]
   }
 
+  type UpdateViagemResponse {
+    viagem: Viagem
+    error: String
+    details: [String]
+  }
+
   type Query {
     motoristaViagens(motoristaId: String): responseMotoristaViagens
     findAllViagens: [Viagem]
+  }
+
+  type Mutation {
+    updateViagemById(
+      id: String!
+      motoristaId: String
+      passageiroId: String
+      data: String
+      horas: Int
+      minutos: Int
+      origem: String
+      destino: String
+      status: String
+    ): UpdateViagemResponse!
   }
 `;
