@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import env from "./config/config";
 import routeUsuarios from "./routes/routeUsuario";
 import routeViagens from "./routes/routeViagem";
-import { typeDefs } from "./schemas/viagemTypeDefs";
+import { typeDefs } from "./schemas/typeDefs";
 import { resolvers } from "./resolvers/resolvers";
 import { ApolloServer } from "apollo-server-express";
 
