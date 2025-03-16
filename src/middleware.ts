@@ -3,15 +3,19 @@ import jwt from "jsonwebtoken";
 
 const authRoutes = [
   // { route: "/api/usuarios", method: "GET" },
-  { route: "/api/usuarios:id", method: "GET" },
-  { route: "/api/usuarios:id", method: "PUT" },
+  { route: "/api/usuarios/:id", method: "GET" },
+  { route: "/api/usuarios/:id", method: "PUT" },
+  { route: "/api/usuarios/:id", method: "DELETE" },
 ];
 
 export const middleware = async (req: any, res: any, next: any) => {
   const IsAprivateRoute = authRoutes.some((authRoutesObject) => {
+    const route = authRoutesObject.route.split(":")[0];
     return (
-      authRoutesObject.route == req.originalUrl &&
-      authRoutesObject.method == req.method
+      authRoutesObject.method == req.method &&
+      req.originalUrl.includes(route) &&
+      req.originalUrl.split("/").length > 3 &&
+      !(req.originalUrl.includes("/login") || req.originalUrl.includes("/tipo"))
     );
   });
 
