@@ -40,7 +40,12 @@ export const createViagem = async (args: any) => {
         id: result.data.motoristaId,
       });
 
-      if (!motorista?.nome) return {};
+      if (!motorista?.nome)
+        return {
+          viagem: "",
+          errors: "Motorista invalido!",
+          details: ["Erro 404. Motorista não encontrado!"],
+        };
       motorista.viagensId.push(id);
       await motorista.save();
     }
