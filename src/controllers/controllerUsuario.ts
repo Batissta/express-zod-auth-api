@@ -1,6 +1,7 @@
 import {
   validateLoginPayload,
   validateCriarPayload,
+  validateAtualizarPayload,
 } from "../validations/usuarioZod";
 import UsuarioRepository from "../models/modelUsuario";
 import { listarMotoristas, criarMotorista } from "./controllerMotorista";
@@ -83,6 +84,36 @@ export const findUsers = async (req: any, res: any) => {
   }
 };
 
+export const updateUser = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const resultValidate = validateAtualizarPayload(req.body);
+    if (!resultValidate.success)
+      return res.status(400).json({
+        message:
+          "Dados inválidos. Acesse a documentação da API para mais informações!\nhttps://github.com/Batissta/express-zod-auth-api",
+      });
+    const userToUpdate = await UsuarioRepository.findOneAndUpdate(
+      { id },
+      { $set: { ...resultValidate.data } },
+      { new: true }
+    );
+    if (!(userToUpdate && userToUpdate.nome))
+      return res.status(404).json({
+        message: "Usuário não encontrado.",
+      });
+    return res.status(200).json({
+      message: "Usuário atualizado com sucesso!",
+      usuario: userToUpdate,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      return res.status(400).json({
+        mensagem: error.message,
+      });
+  }
+};
+
 export const login = async (req: any, res: any) => {
   try {
     const zodValidation = validateLoginPayload(req.body);
@@ -90,11 +121,11 @@ export const login = async (req: any, res: any) => {
       return res.status(400).json({
         errors: zodValidation.errors,
       });
-
     const user = await UsuarioRepository.findOne({
       email: zodValidation.data.email,
     });
-    if (!user)
+
+    if (!(user && user.nome))
       return res.status(400).json({ mensagem: "Credenciais Inválidas!" });
 
     const isThepasswordValid = await bcrypt.compare(
