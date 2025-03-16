@@ -5,25 +5,60 @@ const criarViagemSchema = z.object({
     .string()
     .startsWith("u.", "Motorista com o formato de ID inválido")
     .optional(),
-  data: z.string().length(10, "A data deve estar nesse formato: dd-mm-aaaa"),
-  hora: z.object({
-    horas: z
-      .number()
-      .min(0, "A hora mínima é 0 que representa 00:00.")
-      .max(23, "A hora máxima é 23 que representa 11PM."),
-    minutos: z
-      .number()
-      .min(0, "O mínimo é 0 em minutos.")
-      .max(59, "O máximo é 59 em minutos."),
-  }),
+  passageirosId: z
+    .array(
+      z.string().startsWith("u.", "Passageiro com o formato de ID inválido")
+    )
+    .optional(),
+  data: z
+    .string()
+    .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, {
+      message: "Formato inválido. Utilize o formato dd/mm/aaaa",
+    })
+    .refine(
+      (dateString) => {
+        const [day, month, year] = dateString.split("/").map(Number);
+        const date = new Date(year, month - 1, day);
+        return (
+          date.getDate() === day &&
+          date.getMonth() === month - 1 &&
+          date.getFullYear() === year
+        );
+      },
+      {
+        message: "A data informada está inválida!",
+      }
+    ),
+  hora: z
+    .object({
+      horas: z
+        .number()
+        .min(0, "A hora mínima é 0 que representa 00:00.")
+        .max(23, "A hora máxima é 23 que representa 11PM."),
+      minutos: z
+        .number()
+        .min(0, "O mínimo é 0 em minutos.")
+        .max(59, "O máximo é 59 em minutos."),
+    })
+    .optional(),
+  horas: z
+    .number()
+    .min(0, "A hora mínima é 0 que representa 00:00.")
+    .max(23, "A hora máxima é 23 que representa 11PM.")
+    .optional(),
+  minutos: z
+    .number()
+    .min(0, "O mínimo é 0 em minutos.")
+    .max(59, "O máximo é 59 em minutos.")
+    .optional(),
   origem: z
     .string()
     .min(2, "A origem da viagem deve possuir no mínimo 2 caracteres")
-    .max(50, "A origem da viagem deve possuir no máximo 50 caracteres"),
+    .max(100, "A origem da viagem deve possuir no máximo 100 caracteres"),
   destino: z
     .string()
     .min(2, "O destino da viagem deve possuir no mínimo 2 caracteres")
-    .max(50, "O destino da viagem deve possuir no máximo 50 caracteres"),
+    .max(100, "O destino da viagem deve possuir no máximo 100 caracteres"),
 });
 
 const atualizarViagemSchema = z.object({
@@ -66,7 +101,8 @@ const atualizarViagemSchema = z.object({
     .refine(
       (status) => ["pendente", "confirmada", "concluida"].includes(status),
       { message: "O status deve ser pendente, confirmada ou concluida." }
-    ),
+    )
+    .optional(),
 });
 
 export const validateCriarViagem = (payload: unknown) => {
@@ -75,6 +111,11 @@ export const validateCriarViagem = (payload: unknown) => {
     return {
       errors: payloadIsValid.error.errors.map((e) => e.message),
       ...payloadIsValid,
+    };
+  if (payloadIsValid.data.horas)
+    payloadIsValid.data.hora = {
+      horas: payloadIsValid.data.horas,
+      minutos: payloadIsValid.data.minutos ? payloadIsValid.data.minutos : 0,
     };
   return payloadIsValid;
 };
