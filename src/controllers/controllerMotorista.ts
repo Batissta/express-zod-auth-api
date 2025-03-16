@@ -1,4 +1,6 @@
 import usuarioRepo from "../models/modelUsuario";
+import bcrypt from "bcrypt";
+import env from "../config/config";
 import { validateCriarMotoristaSchema } from "../validations/motoristaZod";
 import { validateCriarPayload } from "../validations/usuarioZod";
 import { randomUUID } from "node:crypto";
@@ -23,6 +25,10 @@ export const criarMotorista = async (req: any, res: any) => {
       });
 
     const usuarioId = `u.${randomUUID()}`;
+    resultSchemaUsuario.data.senha = await bcrypt.hash(
+      resultSchemaUsuario.data.senha,
+      Number(env.ROUNDS)
+    );
 
     const resultSchemaMotorista = validateCriarMotoristaSchema({
       usuarioId,
