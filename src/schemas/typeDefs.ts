@@ -38,7 +38,7 @@ export const typeDefs = gql`
     viagens: [ViagemResponse]
   }
 
-  type UpdateViagemResponse {
+  type MutationViagemResponse {
     viagem: Viagem
     error: String
     details: [String]
@@ -60,6 +60,18 @@ export const typeDefs = gql`
       origem: String
       destino: String
       status: String
-    ): UpdateViagemResponse!
+    ): MutationViagemResponse!
+
+    createViagem(
+      id: String!
+      motoristaId: String!
+      passageiroId: String!
+      data: String!
+      horas: Int!
+      minutos: Int!
+      origem: String!
+      destino: String!
+      status: String!
+    ): MutationViagemResponse!
   }
 `;
