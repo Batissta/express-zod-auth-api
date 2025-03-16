@@ -63,9 +63,8 @@ export const typeDefs = gql`
     ): MutationViagemResponse!
 
     createViagem(
-      id: String!
-      motoristaId: String!
-      passageiroId: String!
+      motoristaId: String
+      passageirosId: [String]
       data: String!
       horas: Int!
       minutos: Int!

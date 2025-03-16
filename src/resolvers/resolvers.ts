@@ -2,6 +2,7 @@ import {
   findAllViagens,
   queryFindByMotoristaId,
   mutationUpdateById,
+  createViagem,
 } from "../controllers/controllerViagem";
 
 type paramMotoristaViagens = {
@@ -15,6 +16,7 @@ export const resolvers = {
     findAllViagens: async () => await findAllViagens(),
   },
   Mutation: {
+    createViagem: async (_: any, { ...args }: any) => await createViagem(args),
     updateViagemById: async (_: any, { id, ...args }: any) =>
       await mutationUpdateById(id, args),
   },
