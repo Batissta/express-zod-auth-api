@@ -38,14 +38,18 @@ export const typeDefs = gql`
     viagens: [ViagemResponse]
   }
 
+  type responseMotoristaViagens {
+    viagem: ViagemResponse
+  }
+
   type MutationViagemResponse {
     viagem: Viagem
     error: String
-    details: [String]
   }
 
   type Query {
-    motoristaViagens(motoristaId: String): responseMotoristaViagens
+    motoristaViagens(motoristaId: String!): responseMotoristaViagens
+    findViagemById(id: String!): MutationViagemResponse
     findAllViagens: [Viagem]
   }
 
