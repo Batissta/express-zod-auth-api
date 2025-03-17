@@ -3,7 +3,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import env from "./config/config";
 import routeUsuarios from "./routes/routeUsuario";
-import routeViagens from "./routes/routeViagem";
 import { typeDefs } from "./schemas/typeDefs";
 import { resolvers } from "./resolvers/resolvers";
 import { ApolloServer } from "apollo-server-express";
@@ -12,7 +11,6 @@ const app: express.Application | any = express();
 app.use(express.json());
 app.use(cors());
 app.use("/api/usuarios", routeUsuarios);
-app.use("/api/viagens", routeViagens);
 
 const server = new ApolloServer({
   typeDefs,
