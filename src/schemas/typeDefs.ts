@@ -45,6 +45,7 @@ export const typeDefs = gql`
   type MutationViagemResponse {
     viagem: Viagem
     error: String
+    details: [String]
   }
 
   type Query {
