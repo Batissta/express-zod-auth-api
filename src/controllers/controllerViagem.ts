@@ -5,25 +5,9 @@ import { randomUUID } from "node:crypto";
 import {
   validateCriarViagem,
   validateAtualizarViagem,
-  tAtualizarViagemSchema,
 } from "../validations/viagemZod";
 
-export const findViagens = async (req: any, res: any) => {
-  try {
-    const viagens = await viagemRepository.find();
-    return res.status(200).json({
-      quantidade: viagens.length,
-      viagens,
-    });
-  } catch (error: unknown) {
-    if (error instanceof Error)
-      return res.status(400).json({
-        message: error.message,
-      });
-  }
-};
-
-export const createViagem = async (args: any) => {
+export const mutationCreateViagem = async (args: any) => {
   try {
     const result = validateCriarViagem(args);
     if (!result.success)
@@ -109,6 +93,14 @@ export const queryFindByMotoristaId = async (motoristaId: string) => {
   }
 };
 
-export const findAllViagens = async () => {
+export const queryFindAllViagens = async () => {
   return await viagemRepository.find();
+};
+
+export const queryFindViagemById = async (id: string) => {
+  const viagem = await viagemRepository.findOne({ id });
+  return {
+    viagem: viagem ? viagem : {},
+    error: viagem ? "" : "Viagem não encontrada!",
+  };
 };
