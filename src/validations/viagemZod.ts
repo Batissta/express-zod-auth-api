@@ -18,8 +18,10 @@ const criarViagemSchema = z.object({
     .refine(
       (dateString) => {
         const [day, month, year] = dateString.split("/").map(Number);
-        const date = new Date(year, month - 1, day);
+        const data = new Date();
+        const date = new Date(year, month - 1, day, 23, 59, 59);
         return (
+          data.getTime() <= date.getTime() &&
           date.getDate() === day &&
           date.getMonth() === month - 1 &&
           date.getFullYear() === year
@@ -69,8 +71,25 @@ const atualizarViagemSchema = z.object({
     .optional(),
   data: z
     .string()
-    .length(10, "A data deve estar nesse formato: dd-mm-aaaa")
-    .optional(),
+    .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, {
+      message: "Formato inválido. Utilize o formato dd/mm/aaaa",
+    })
+    .refine(
+      (dateString) => {
+        const [day, month, year] = dateString.split("/").map(Number);
+        const data = new Date();
+        const date = new Date(year, month - 1, day, 23, 59, 59);
+        return (
+          data.getTime() <= date.getTime() &&
+          date.getDate() === day &&
+          date.getMonth() === month - 1 &&
+          date.getFullYear() === year
+        );
+      },
+      {
+        message: "A data informada está inválida!",
+      }
+    ),
   hora: z
     .object({
       horas: z
@@ -92,6 +111,13 @@ const atualizarViagemSchema = z.object({
     .number()
     .min(0, "O mínimo é 0 em minutos.")
     .max(59, "O máximo é 59 em minutos.")
+    .optional(),
+  passageirosId: z
+    .array(z.string().startsWith("u.", "Passageiro com id inválido!"))
+    .optional(),
+  passageiroId: z
+    .string()
+    .startsWith("u.", "Passageiro com id inválido!")
     .optional(),
   origem: z.string().optional(),
   destino: z.string().optional(),
