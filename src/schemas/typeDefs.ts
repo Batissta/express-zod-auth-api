@@ -76,5 +76,12 @@ export const typeDefs = gql`
     ): MutationViagemResponse!
 
     deleteViagemById(id: String!): String
+
+    deletePassageiroFromViagemById(
+      viagemId: String!
+      passageiroId: String!
+    ): String
+
+    addPassageiroToViagemById(viagemId: String!, passageiroId: String!): String
   }
 `;
