@@ -1,4 +1,4 @@
-# 🔒 API Express + Zod + Mongoose + Typescript + JWT
+# 🔒 API Express + Typescript + Zod + GraphQL + Mongoose + JWT
 
 <div align="center">
   
