@@ -89,7 +89,8 @@ const atualizarViagemSchema = z.object({
       {
         message: "A data informada está inválida!",
       }
-    ),
+    )
+    .optional(),
   hora: z
     .object({
       horas: z
