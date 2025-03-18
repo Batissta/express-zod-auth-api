@@ -28,25 +28,25 @@ export const createUser = async (req: any, res: any) => {
         .json({ mensagem: "Este e-mail já está sendo utilizado!" });
 
     if (req.body.tipo === "motorista") return criarMotorista(req, res);
-    const zodValidation = validateCriarPayload(req.body);
+    const result = validateCriarPayload(req.body);
 
-    if (!zodValidation.success)
+    if (!result.success)
       return res.status(400).send({
         mensagem:
           "Você enviou algo fora do formato correto, busque a documentação!",
-        erros: zodValidation.errors,
+        erros: result.errors,
       });
 
     const usuarioId = `u.${randomUUID()}`;
-    zodValidation.data.senha = await bcrypt.hash(
-      zodValidation.data.senha,
+    result.data.senha = await bcrypt.hash(
+      result.data.senha,
       Number(env.ROUNDS)
     );
 
     const usuarioCriado: TSchemaUserUnpadronized =
       await UsuarioRepository.create({
         id: usuarioId,
-        ...zodValidation.data,
+        ...result.data,
       });
 
     const userPadronized = padronizaResponseUser(usuarioCriado);
@@ -92,19 +92,22 @@ export const updateUser = async (req: any, res: any) => {
       return res.status(400).json({
         message:
           "Dados inválidos. Acesse a documentação da API para mais informações!\nhttps://github.com/Batissta/express-zod-auth-api",
+        errors: resultValidate.errors,
       });
-    const userToUpdate = await UsuarioRepository.findOneAndUpdate(
-      { id },
-      { $set: { ...resultValidate.data } },
-      { new: true }
-    );
+    const userToUpdate: TSchemaUserUnpadronized | any =
+      await UsuarioRepository.findOneAndUpdate(
+        { id },
+        { $set: { ...resultValidate.data } },
+        { new: true }
+      );
     if (!(userToUpdate && userToUpdate.nome))
       return res.status(404).json({
         message: "Usuário não encontrado.",
       });
+    const userResponse = padronizaResponseUser(userToUpdate);
     return res.status(200).json({
       message: "Usuário atualizado com sucesso!",
-      usuario: userToUpdate,
+      usuario: userResponse.data,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
@@ -116,20 +119,20 @@ export const updateUser = async (req: any, res: any) => {
 
 export const login = async (req: any, res: any) => {
   try {
-    const zodValidation = validateLoginPayload(req.body);
-    if (!zodValidation.success)
+    const result = validateLoginPayload(req.body);
+    if (!result.success)
       return res.status(400).json({
-        errors: zodValidation.errors,
+        errors: result.errors,
       });
     const user = await UsuarioRepository.findOne({
-      email: zodValidation.data.email,
+      email: result.data.email,
     });
 
     if (!(user && user.nome))
       return res.status(400).json({ mensagem: "Credenciais Inválidas!" });
 
     const isThepasswordValid = await bcrypt.compare(
-      zodValidation.data.senha,
+      result.data.senha,
       user.senha
     );
 
@@ -174,14 +177,14 @@ export const findByType = async (req: any, res: any) => {
 export const findById = async (req: any, res: any) => {
   try {
     const { id } = req.params;
-    const user = await UsuarioRepository.find({ id });
+    const user: any = await UsuarioRepository.findOne({ id });
     if (!user)
       return res.status(404).json({
         message: "Usuário não encontrado!",
       });
-    // const passageirosResponse = padronizaResponseUser(user);
+    const passageirosResponse = padronizaResponseUser(user);
     return res.status(200).json({
-      pessoas: user,
+      usuario: passageirosResponse.data,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
