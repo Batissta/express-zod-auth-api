@@ -67,9 +67,46 @@ export const mutationUpdateById = async (id: string, args: any) => {
     };
   }
 
+  if (validationResult.data.passageiroId) {
+    const passageiro = await usuarioRepository.findOne({
+      id: validationResult.data.passageiroId,
+    });
+    if (!passageiro?.nome)
+      return {
+        viagem: null,
+        error: "Passageiro não encontrado!",
+        details: [],
+      };
+    passageiro?.viagensId.push(validationResult.data.id);
+    await passageiro?.save();
+  }
+
+  if (validationResult.data.passageirosId) {
+    validationResult.data.passageirosId.forEach(async (p, i) => {
+      const passageiro = await usuarioRepository.findOne({
+        id: p,
+      });
+      if (!passageiro?.nome)
+        return {
+          viagem: null,
+          error: `${i + 1}° passageiro não foi encontrado!`,
+          details: [],
+        };
+      passageiro?.viagensId.push(validationResult.data.id);
+      await passageiro?.save();
+    });
+  }
+
   const updatedViagem = await viagemRepository.findOneAndUpdate(
     { id: validationResult.data.id },
-    { $set: { ...validationResult.data } },
+    {
+      $set: { ...validationResult.data },
+      $push: {
+        ...(validationResult.data.passageiroId && {
+          passageirosId: validationResult.data.passageiroId,
+        }),
+      },
+    },
     { new: true }
   );
 
@@ -77,6 +114,18 @@ export const mutationUpdateById = async (id: string, args: any) => {
     return { error: "Viagem não encontrada!", viagem: null, details: [] };
 
   return { error: "", viagem: updatedViagem, details: [] };
+};
+
+export const mutationDeleteById = async (id: string) => {
+  try {
+    const idValido = validateAtualizarViagem({ id });
+    if (!idValido.success) return "ID inválido.";
+    const viagem = await viagemRepository.findOneAndDelete({ id });
+    if (!viagem?.origem) return "Viagem não encontrada!";
+    return "Viagem deletada com sucesso!";
+  } catch (error: unknown) {
+    if (error instanceof Error) return error.message;
+  }
 };
 
 export const queryFindByMotoristaId = async (motoristaId: string) => {
