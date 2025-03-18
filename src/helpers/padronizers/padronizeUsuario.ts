@@ -2,6 +2,7 @@ import { z } from "zod";
 import { veiculoSchema } from "../../validations/motoristaZod";
 
 export const schemaUserPadronized = z.object({
+  id: z.string().startsWith("u."),
   nome: z.string(),
   email: z.string(),
   tipo: z.string(),
