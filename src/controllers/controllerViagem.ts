@@ -116,6 +116,7 @@ export const mutationUpdateById = async (id: string, args: any) => {
   return { error: "", viagem: updatedViagem, details: [] };
 };
 
+// remover a possibilidade de alterar o motorista ou passageiros por aqui e criar mutations separadas.
 export const mutationDeleteById = async (id: string) => {
   try {
     const idValido = validateAtualizarViagem({ id });
@@ -123,6 +124,40 @@ export const mutationDeleteById = async (id: string) => {
     const viagem = await viagemRepository.findOneAndDelete({ id });
     if (!viagem?.origem) return "Viagem não encontrada!";
     return "Viagem deletada com sucesso!";
+  } catch (error: unknown) {
+    if (error instanceof Error) return error.message;
+  }
+};
+
+export const deletePassageiroFromViagemById = async (
+  viagemId: string,
+  passageiroId: string
+) => {
+  try {
+    const viagemIsValid = await viagemRepository.findOne({ id: viagemId });
+    if (!viagemIsValid?.origem) return "A viagem não foi encontrada.";
+
+    const passageiroValid = await usuarioRepository.findOne({
+      id: passageiroId,
+    });
+
+    if (
+      !passageiroValid?.nome ||
+      !viagemIsValid.passageirosId.some((pas) => pas === passageiroValid.id)
+    )
+      return "O passageiro não foi encontrado.";
+
+    passageiroValid.viagensId = passageiroValid.viagensId.filter((vId) => {
+      return vId !== viagemId;
+    }) as [string];
+    await passageiroValid.save();
+
+    viagemIsValid.passageirosId = viagemIsValid.passageirosId.filter((pId) => {
+      return pId !== passageiroId;
+    }) as [string];
+    await viagemIsValid.save();
+
+    return `Remoção bem-sucedida!`;
   } catch (error: unknown) {
     if (error instanceof Error) return error.message;
   }
