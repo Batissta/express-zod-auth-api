@@ -34,7 +34,6 @@ export const padronizaMotoristas = (payload: TypeMotoristaNaoPadronizado[]) => {
   const motoristasTransformados = payload.map((user) => {
     return motoristaResponseSchema.safeParse(user).data;
   });
-  console.log(motoristasTransformados);
 
   return motoristasTransformados;
 };
