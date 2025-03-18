@@ -131,12 +131,12 @@ export const login = async (req: any, res: any) => {
     if (!(user && user.nome))
       return res.status(400).json({ mensagem: "Credenciais Inválidas!" });
 
-    const isThepasswordValid = await bcrypt.compare(
+    const isThePasswordValid = await bcrypt.compare(
       result.data.senha,
       user.senha
     );
 
-    if (!isThepasswordValid)
+    if (!isThePasswordValid)
       return res.status(400).json({ mensagem: "Credenciais Inválidas!" });
 
     const token = jwt.sign(user.id, env.SECRET);
