@@ -38,10 +38,6 @@ export const typeDefs = gql`
     viagens: [ViagemResponse]
   }
 
-  type responseMotoristaViagens {
-    viagem: ViagemResponse
-  }
-
   type MutationViagemResponse {
     viagem: Viagem
     error: String
@@ -58,6 +54,7 @@ export const typeDefs = gql`
     updateViagemById(
       id: String!
       motoristaId: String
+      passageirosId: [String]
       passageiroId: String
       data: String
       horas: Int
@@ -77,5 +74,7 @@ export const typeDefs = gql`
       destino: String!
       status: String!
     ): MutationViagemResponse!
+
+    deleteViagemById(id: String): String
   }
 `;
