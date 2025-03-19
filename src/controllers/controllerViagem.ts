@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import {
   validateCriarViagem,
   validateAtualizarViagem,
+  validateAdicionarPassageiroParaViagem,
 } from "../validations/viagemZod";
 
 export const mutationCreateViagem = async (args: any) => {
@@ -134,6 +135,12 @@ export const deletePassageiroFromViagemById = async (
   passageiroId: string
 ) => {
   try {
+    const result = validateAdicionarPassageiroParaViagem({
+      id: viagemId,
+      passageiroId,
+    });
+    if (!result.success) return `${result.errors.toString()}`;
+
     const viagemIsValid = await viagemRepository.findOne({ id: viagemId });
     if (!viagemIsValid?.origem) return "A viagem não foi encontrada.";
 
@@ -158,6 +165,38 @@ export const deletePassageiroFromViagemById = async (
     await viagemIsValid.save();
 
     return `Remoção bem-sucedida!`;
+  } catch (error: unknown) {
+    if (error instanceof Error) return error.message;
+  }
+};
+
+export const addPassageiroToViagemById = async (
+  viagemId: string,
+  passageiroId: string
+) => {
+  try {
+    const result = validateAdicionarPassageiroParaViagem({
+      id: viagemId,
+      passageiroId,
+    });
+    if (!result.success) return `${result.errors.toString()}`;
+    const viagemIsValid = await viagemRepository.findOne({ id: viagemId });
+    if (!viagemIsValid?.origem) return "A viagem não foi encontrada.";
+
+    const passageiroValid = await usuarioRepository.findOne({
+      id: passageiroId,
+    });
+
+    if (!passageiroValid?.nome) return "O passageiro não foi encontrado.";
+
+    if (viagemIsValid.passageirosId.some((p) => p === passageiroId))
+      return "O passageiro já está cadastrado a essa viagem.";
+    passageiroValid.viagensId.push(viagemId);
+    await passageiroValid.save();
+    viagemIsValid.passageirosId.push(passageiroId);
+    await viagemIsValid.save();
+
+    return `Adição bem-sucedida!`;
   } catch (error: unknown) {
     if (error instanceof Error) return error.message;
   }
