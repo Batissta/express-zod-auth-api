@@ -121,7 +121,7 @@ export const findById = async (req: any, res: any) => {
         },
       },
     ]);
-    if (!motorista)
+    if (motorista.length === 0)
       return res.status(404).json({
         message: "Motorista não encontrado!",
       });
@@ -137,15 +137,16 @@ export const findById = async (req: any, res: any) => {
   }
 };
 
-export const deleteById = async (req: any, res: any) => {
+export const deleteMotoristaById = async (req: any, res: any) => {
   try {
     const { id } = req.params;
-    const motorista = await motoristaRepository.findOne({ id });
+    const motorista = await motoristaRepository.findOne({ usuarioId: id });
     if (!motorista)
       return res.status(404).json({
         message: "Motorista não encontrado!",
       });
     await motorista.deleteOne();
+    await usuarioRepository.deleteOne({ id });
     return res.status(204).json();
   } catch (error: unknown) {
     if (error instanceof Error)
