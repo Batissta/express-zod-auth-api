@@ -27,7 +27,11 @@ export const createUser = async (req: any, res: any) => {
         .status(409)
         .json({ mensagem: "Este e-mail já está sendo utilizado!" });
 
-    if (req.body.tipo === "motorista") return criarMotorista(req, res);
+    if (req.body.tipo === "motorista")
+      return res.status(400).json({
+        message:
+          "Para a criação de um motorista você precisa fazer um POST em /api/motoristas/",
+      });
     const result = validateCriarPayload(req.body);
 
     if (!result.success)
@@ -37,7 +41,6 @@ export const createUser = async (req: any, res: any) => {
         erros: result.errors,
       });
 
-    const usuarioId = `u.${randomUUID()}`;
     result.data.senha = await bcrypt.hash(
       result.data.senha,
       Number(env.ROUNDS)
@@ -45,7 +48,7 @@ export const createUser = async (req: any, res: any) => {
 
     const usuarioCriado: TSchemaUserUnpadronized =
       await UsuarioRepository.create({
-        id: usuarioId,
+        id: `u.${randomUUID()}`,
         ...result.data,
       });
 
