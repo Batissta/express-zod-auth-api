@@ -11,9 +11,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
   padronizaResponseUser,
+  padronizaResponseUsers,
   TSchemaUserUnpadronized,
-} from "../helpers/padronizers/padronizeUsuario";
-import usuarioRepo from "../helpers/usuarioRepoMethods";
+} from "../helpers/padronizeUsuario";
 
 export const createUser = async (req: any, res: any) => {
   try {
@@ -70,10 +70,13 @@ export const createUser = async (req: any, res: any) => {
 
 export const findUsers = async (req: any, res: any) => {
   try {
-    const passageiros = await usuarioRepo.find({ tipo: "passageiro" });
+    const passageiros: any = await UsuarioRepository.find({
+      tipo: "passageiro",
+    });
+    const passageirosResponse = padronizaResponseUsers(passageiros);
     res.status(200).json({
-      quantidade: passageiros.length,
-      passageiros: passageiros,
+      quantidade: passageirosResponse.length,
+      passageiros: passageirosResponse,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
