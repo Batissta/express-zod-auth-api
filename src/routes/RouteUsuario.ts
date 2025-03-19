@@ -5,6 +5,7 @@ import {
   findUsers,
   login,
   updateUser,
+  deleteById,
 } from "../controllers/controllerUsuario";
 import { middleware } from "../middleware";
 
@@ -14,7 +15,7 @@ router.use(middleware);
 
 router.route("/").get(findUsers).post(createUser);
 
-router.route("/:id").get(findById).put(updateUser);
+router.route("/:id").get(findById).put(updateUser).delete(deleteById);
 
 router.route("/login").post(login);
 
