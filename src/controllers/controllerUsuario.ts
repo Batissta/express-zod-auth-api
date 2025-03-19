@@ -1,19 +1,20 @@
+import env from "../config/config";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { randomUUID } from "node:crypto";
+import UsuarioRepository from "../models/modelUsuario";
 import {
   validateLoginPayload,
   validateCriarPayload,
   validateAtualizarPayload,
   eUsuarioTipo,
 } from "../validations/usuarioZod";
-import UsuarioRepository from "../models/modelUsuario";
-import { randomUUID } from "node:crypto";
-import env from "../config/config";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import {
   padronizaResponseUser,
   padronizaResponseUsers,
   TSchemaUserUnpadronized,
 } from "../helpers/padronizeUsuario";
+import { deleteMotoristaById } from "./controllerMotorista";
 
 export const createUser = async (req: any, res: any) => {
   try {
@@ -158,7 +159,7 @@ export const findById = async (req: any, res: any) => {
   try {
     const { id } = req.params;
     const user: any = await UsuarioRepository.findOne({ id });
-    if (!user)
+    if (!(user && user.nome))
       return res.status(404).json({
         message: "Usuário não encontrado!",
       });
@@ -170,6 +171,27 @@ export const findById = async (req: any, res: any) => {
     if (error instanceof Error)
       return res.status(400).json({
         mensage: error.message,
+      });
+  }
+};
+
+export const deleteById = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+    const user = await UsuarioRepository.findOne({ id });
+    if (!(user && user.nome))
+      return res.status(404).json({
+        message: "Usuário não encontrado.",
+      });
+    if (user.tipo === eUsuarioTipo.motorista)
+      return deleteMotoristaById(req, res);
+
+    await user.deleteOne();
+    return res.status(204).json();
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      return res.status(400).json({
+        mensagem: error.message,
       });
   }
 };
