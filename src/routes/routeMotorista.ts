@@ -4,6 +4,7 @@ import {
   updateMotoristaById,
   findById,
   deleteById,
+  findAll,
 } from "../controllers/controllerMotorista";
 import { middleware } from "../middleware";
 
@@ -11,7 +12,7 @@ const router = Router();
 
 router.use(middleware);
 
-router.route("/").post(criarMotorista);
+router.route("/").get(findAll).post(criarMotorista);
 
 router.route("/:id").get(findById).put(updateMotoristaById).delete(deleteById);
 
