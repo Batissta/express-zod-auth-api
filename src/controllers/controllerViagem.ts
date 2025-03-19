@@ -223,8 +223,6 @@ export const queryFindByMotoristaId = async (motoristaId: string) => {
     if (motorista.length === 0) return "ID de motorista inválido!";
     const motoristaResponse = padronizaMotorista(motorista[0]).data;
     const motoristaViagens = await viagemRepository.find({ motoristaId });
-    console.log(motoristaResponse);
-
     return {
       ...motoristaResponse,
       viagens: motoristaViagens,
