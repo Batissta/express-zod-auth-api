@@ -2,6 +2,7 @@ import {
   validateLoginPayload,
   validateCriarPayload,
   validateAtualizarPayload,
+  eUsuarioTipo,
 } from "../validations/usuarioZod";
 import UsuarioRepository from "../models/modelUsuario";
 import { listarMotoristas, criarMotorista } from "./controllerMotorista";
@@ -45,6 +46,7 @@ export const createUser = async (req: any, res: any) => {
       result.data.senha,
       Number(env.ROUNDS)
     );
+    result.data.tipo = eUsuarioTipo.passageiro;
 
     const usuarioCriado: TSchemaUserUnpadronized =
       await UsuarioRepository.create({
