@@ -66,31 +66,6 @@ export const criarMotorista = async (req: any, res: any) => {
   }
 };
 
-export const listarMotoristas = async (req: any, res: any) => {
-  try {
-    const motoristas: TypeMotoristaNaoPadronizado | any =
-      await motoristaRepository.find();
-
-    if (motoristas.length === 0)
-      return res.status(200).json({
-        quantidade: 0,
-        motoristas: [],
-      });
-
-    const data = padronizaMotoristas(motoristas);
-    return res.status(200).json({
-      quantidade: motoristas.length,
-      motoristas: data,
-    });
-  } catch (error: unknown) {
-    if (error instanceof Error)
-      return res.status(500).json({
-        mensagem:
-          "O servidor está enfrentando problemas. Entre em contato com o suporte!",
-      });
-  }
-};
-
 export const updateMotoristaById = async (req: any, res: any) => {
   try {
     const resultValidate = validateAtualizarSchema(req.body);
