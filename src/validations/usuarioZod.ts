@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-enum Tipos {
-  passageiro = "passageiro",
+export enum eUsuarioTipo {
   motorista = "motorista",
+  passageiro = "passageiro",
 }
 
 export const CriarUsuarioZodSchema = z.object({
@@ -12,7 +12,7 @@ export const CriarUsuarioZodSchema = z.object({
     .max(20, "O nome deve ter no máximo 20 caracteres!"),
   email: z.string().trim().toLowerCase().email("E-mail inválido!"),
   senha: z.string().min(4, "Sua senha deve conter pelo menos 4 caracteres!"),
-  tipo: z.nativeEnum(Tipos),
+  tipo: z.nativeEnum(eUsuarioTipo),
 });
 
 export const AtualizarUsuarioZodSchema = z.object({
@@ -31,7 +31,7 @@ export const AtualizarUsuarioZodSchema = z.object({
     .string()
     .min(4, "Sua senha deve conter pelo menos 4 caracteres!")
     .optional(),
-  tipo: z.nativeEnum(Tipos).optional(),
+  tipo: z.nativeEnum(eUsuarioTipo).optional(),
   viagemId: z.string().startsWith("v.").optional(),
   avaliacaoId: z.string().startsWith("a.").optional(),
 });
