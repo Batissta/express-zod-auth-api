@@ -27,21 +27,3 @@ export const padronizaResponseUser = (payload: TSchemaUserUnpadronized) => {
     };
   return result;
 };
-
-const esquemaMotoristaNaoPadronizado = z.object({
-  usuario: z.array(
-    z.object({
-      id: z.string(),
-      nome: z.string(),
-      email: z.string(),
-      tipo: z.string(),
-      viagensId: z.array(z.string()),
-      avaliacoesId: z.array(z.string()),
-    })
-  ),
-  autenticado: z.boolean(),
-  veiculo: veiculoSchema,
-});
-export type TypeMotoristaNaoPadronizado = z.infer<
-  typeof esquemaMotoristaNaoPadronizado
->;
