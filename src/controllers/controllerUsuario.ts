@@ -5,13 +5,11 @@ import {
   eUsuarioTipo,
 } from "../validations/usuarioZod";
 import UsuarioRepository from "../models/modelUsuario";
-import { listarMotoristas, criarMotorista } from "./controllerMotorista";
 import { randomUUID } from "node:crypto";
 import env from "../config/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
-  padronizaResponseUsers,
   padronizaResponseUser,
   TSchemaUserUnpadronized,
 } from "../helpers/padronizers/padronizeUsuario";
@@ -144,28 +142,6 @@ export const login = async (req: any, res: any) => {
     return res.status(200).json({
       mensagem: "Login efetuado com sucesso!",
       authorization: token,
-    });
-  } catch (error: unknown) {
-    if (error instanceof Error)
-      return res.status(400).json({
-        mensage: error.message,
-      });
-  }
-};
-
-export const findByType = async (req: any, res: any) => {
-  try {
-    const { tipo } = req.params;
-    if (!(tipo === "passageiros") && !(tipo === "motoristas"))
-      return res.status(400).json({
-        mensage: "Tipo inválido!",
-      });
-    if (tipo == "motoristas") return listarMotoristas(req, res);
-    const passageiros = await UsuarioRepository.find({ tipo: "passageiro" });
-    const passageirosResponse = padronizaResponseUsers(passageiros);
-    return res.status(200).json({
-      quantidade: passageirosResponse.length,
-      pessoas: passageirosResponse,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
