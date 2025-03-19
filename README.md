@@ -1,4 +1,8 @@
+<div align="center">
+  
 # 🔒 API Express + Typescript + Zod + GraphQL + Mongoose + JWT
+
+</div>
 
 <div align="center">
   
