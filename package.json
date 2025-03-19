@@ -27,7 +27,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
+    "swagger-ui-express": "^5.0.1",
     "typescript": "^5.8.2",
+    "yamljs": "^0.3.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -36,6 +38,8 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.96",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/yamljs": "^0.2.34",
     "ts-node-dev": "^2.0.0"
   }
 }
