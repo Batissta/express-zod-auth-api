@@ -52,7 +52,8 @@ export const atualizarVeiculoSchema = z.object({
 export const criarMotoristaSchema = z.object({
   usuarioId: z
     .string()
-    .startsWith("u.", "O id informado está em um formato inválido!"),
+    .startsWith("u.", "O id informado está em um formato inválido!")
+    .optional(),
   veiculo: veiculoSchema,
 });
 
