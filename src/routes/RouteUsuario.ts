@@ -2,7 +2,6 @@ import { Router } from "express";
 import {
   createUser,
   findById,
-  findByType,
   findUsers,
   login,
   updateUser,
@@ -16,8 +15,6 @@ router.use(middleware);
 router.route("/").get(findUsers).post(createUser);
 
 router.route("/:id").get(findById).put(updateUser);
-
-router.route("/tipo/:tipo").get(findByType);
 
 router.route("/login").post(login);
 
