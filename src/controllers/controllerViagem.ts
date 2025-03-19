@@ -1,5 +1,4 @@
 import usuarioRepository from "../models/modelUsuario";
-import motoristaRepo from "../helpers/motoristaRepoMethods";
 import viagemRepository from "../models/modelViagem";
 import { randomUUID } from "node:crypto";
 import {
@@ -7,6 +6,8 @@ import {
   validateAtualizarViagem,
   validateAdicionarPassageiroParaViagem,
 } from "../validations/viagemZod";
+import motoristaRepository from "../models/modelMotorista";
+import { padronizaMotorista } from "../helpers/padronizeMotorista";
 
 export const mutationCreateViagem = async (args: any) => {
   try {
@@ -204,11 +205,28 @@ export const addPassageiroToViagemById = async (
 
 export const queryFindByMotoristaId = async (motoristaId: string) => {
   try {
-    const motoristaIsValid = await motoristaRepo.auxQueryFindById(motoristaId);
-    if (!motoristaIsValid) return "ID de motorista inválido!";
+    const motorista: any = await motoristaRepository.aggregate([
+      {
+        $match: {
+          usuarioId: motoristaId,
+        },
+      },
+      {
+        $lookup: {
+          from: `usuarios`,
+          localField: "usuarioId",
+          foreignField: "id",
+          as: "usuario",
+        },
+      },
+    ]);
+    if (!motorista) return "ID de motorista inválido!";
+    const motoristaResponse = padronizaMotorista(motorista[0]).data;
     const motoristaViagens = await viagemRepository.find({ motoristaId });
+    console.log(motoristaResponse);
+
     return {
-      ...motoristaIsValid,
+      ...motoristaResponse,
       viagens: motoristaViagens,
     };
   } catch (error: unknown) {
