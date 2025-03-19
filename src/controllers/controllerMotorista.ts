@@ -167,3 +167,19 @@ export const deleteById = async (req: any, res: any) => {
       });
   }
 };
+
+export const findAll = async (req: any, res: any) => {
+  try {
+    const motorista: any = await motoristaRepository.find();
+    const motoristaResponse = padronizaMotoristas(motorista);
+    return res.status(200).json({
+      quantidade: motoristaResponse.length,
+      motoristas: motoristaResponse,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      return res.status(400).json({
+        mensage: error.message,
+      });
+  }
+};
