@@ -10,7 +10,7 @@ import motoristaRepository from "../models/modelMotorista";
 import {
   padronizaMotorista,
   padronizaMotoristas,
-} from "../helpers/padronizers/padronizeMotorista";
+} from "../helpers/padronizeMotorista";
 import usuarioRepository from "../models/modelUsuario";
 
 export const criarMotorista = async (req: any, res: any) => {
