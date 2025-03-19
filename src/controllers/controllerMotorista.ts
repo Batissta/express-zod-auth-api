@@ -143,7 +143,16 @@ export const deleteById = async (req: any, res: any) => {
 
 export const findAll = async (req: any, res: any) => {
   try {
-    const motorista: any = await motoristaRepository.find();
+    const motorista: any = await motoristaRepository.aggregate([
+      {
+        $lookup: {
+          as: "usuario",
+          from: "usuarios",
+          localField: "usuarioId",
+          foreignField: "id",
+        },
+      },
+    ]);
     const motoristaResponse = padronizaMotoristas(motorista);
     return res.status(200).json({
       quantidade: motoristaResponse.length,
