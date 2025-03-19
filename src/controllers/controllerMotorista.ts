@@ -1,3 +1,4 @@
+import usuarioRepo from "../models/modelUsuario";
 import bcrypt from "bcrypt";
 import env from "../config/config";
 import {
@@ -31,12 +32,14 @@ export const criarMotorista = async (req: any, res: any) => {
         erros: resultSchemaUsuario.errors,
       });
 
+    const usuarioId = `u.${randomUUID()}`;
     resultSchemaUsuario.data.senha = await bcrypt.hash(
       resultSchemaUsuario.data.senha,
       Number(env.ROUNDS)
     );
 
     const resultSchemaMotorista = validateCriarMotoristaSchema({
+      usuarioId,
       ...req.body,
     });
     if (!resultSchemaMotorista.success)
@@ -45,7 +48,7 @@ export const criarMotorista = async (req: any, res: any) => {
       });
 
     await usuarioRepository.create({
-      id: `u.${randomUUID()}`,
+      id: usuarioId,
       ...resultSchemaUsuario.data,
       tipo: eUsuarioTipo.motorista,
     });
