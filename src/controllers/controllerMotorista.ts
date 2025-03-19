@@ -1,4 +1,3 @@
-import usuarioRepo from "../models/modelUsuario";
 import bcrypt from "bcrypt";
 import env from "../config/config";
 import {
@@ -12,7 +11,6 @@ import {
   padronizaMotorista,
   padronizaMotoristas,
 } from "../helpers/padronizers/padronizeMotorista";
-import { TypeMotoristaNaoPadronizado } from "../helpers/padronizers/padronizeUsuario";
 import usuarioRepository from "../models/modelUsuario";
 
 export const criarMotorista = async (req: any, res: any) => {
