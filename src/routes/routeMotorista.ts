@@ -3,7 +3,7 @@ import {
   criarMotorista,
   updateMotoristaById,
   findById,
-  deleteById,
+  deleteMotoristaById,
   findAll,
 } from "../controllers/controllerMotorista";
 import { middleware } from "../middleware";
@@ -14,6 +14,10 @@ router.use(middleware);
 
 router.route("/").get(findAll).post(criarMotorista);
 
-router.route("/:id").get(findById).put(updateMotoristaById).delete(deleteById);
+router
+  .route("/:id")
+  .get(findById)
+  .put(updateMotoristaById)
+  .delete(deleteMotoristaById);
 
 export default router;
