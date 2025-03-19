@@ -106,12 +106,26 @@ export const updateMotoristaById = async (req: any, res: any) => {
 export const findById = async (req: any, res: any) => {
   try {
     const { id } = req.params;
-    const motorista: any = await motoristaRepository.findOne({ id });
+    const motorista: any = await motoristaRepository.aggregate([
+      {
+        $match: {
+          usuarioId: id,
+        },
+      },
+      {
+        $lookup: {
+          from: `usuarios`,
+          localField: "usuarioId",
+          foreignField: "id",
+          as: "usuario",
+        },
+      },
+    ]);
     if (!motorista)
       return res.status(404).json({
         message: "Motorista não encontrado!",
       });
-    const motoristaResponse = padronizaMotorista(motorista);
+    const motoristaResponse = padronizaMotorista(motorista[0]);
     return res.status(200).json({
       usuario: motoristaResponse.data,
     });
