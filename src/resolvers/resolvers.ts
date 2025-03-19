@@ -6,6 +6,7 @@ import {
   mutationCreateViagem,
   mutationDeleteById,
   deletePassageiroFromViagemById,
+  addPassageiroToViagemById,
 } from "../controllers/controllerViagem";
 
 type paramMotoristaViagens = {
@@ -37,5 +38,10 @@ export const resolvers = {
       _: any,
       { viagemId, passageiroId }: { viagemId: string; passageiroId: string }
     ) => await deletePassageiroFromViagemById(viagemId, passageiroId),
+
+    addPassageiroToViagemById: async (
+      _: any,
+      { viagemId, passageiroId }: { viagemId: string; passageiroId: string }
+    ) => await addPassageiroToViagemById(viagemId, passageiroId),
   },
 };
