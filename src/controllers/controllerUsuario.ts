@@ -16,7 +16,6 @@ import {
   TSchemaUserUnpadronized,
 } from "../helpers/padronizers/padronizeUsuario";
 import usuarioRepo from "../helpers/usuarioRepoMethods";
-import motoristaRepo from "../helpers/motoristaRepoMethods";
 
 export const createUser = async (req: any, res: any) => {
   try {
@@ -74,12 +73,9 @@ export const createUser = async (req: any, res: any) => {
 export const findUsers = async (req: any, res: any) => {
   try {
     const passageiros = await usuarioRepo.find({ tipo: "passageiro" });
-    const motoristas = await motoristaRepo.findAll();
     res.status(200).json({
-      quantidadePassageiros: passageiros.length,
+      quantidade: passageiros.length,
       passageiros: passageiros,
-      quantidadeMotoristas: motoristas.length,
-      motoristas: motoristas,
     });
   } catch (error: unknown) {
     if (error instanceof Error)
