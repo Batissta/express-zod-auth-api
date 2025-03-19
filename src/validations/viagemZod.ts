@@ -132,6 +132,11 @@ const atualizarViagemSchema = z.object({
     .optional(),
 });
 
+const adicionarPassageiroParaViagemSchema = z.object({
+  id: z.string().startsWith("v.", "Viagem com id inválido!"),
+  passageiroId: z.string().startsWith("u.", "Passageiro com id inválido!"),
+});
+
 export const validateCriarViagem = (payload: unknown) => {
   const payloadIsValid = criarViagemSchema.safeParse(payload);
   if (!payloadIsValid.success)
@@ -158,6 +163,16 @@ export const validateAtualizarViagem = (payload: unknown) => {
     payloadIsValid.data.hora = {
       horas: payloadIsValid.data.horas,
       minutos: payloadIsValid.data.minutos ? payloadIsValid.data.minutos : 0,
+    };
+  return payloadIsValid;
+};
+
+export const validateAdicionarPassageiroParaViagem = (payload: unknown) => {
+  const payloadIsValid = adicionarPassageiroParaViagemSchema.safeParse(payload);
+  if (!payloadIsValid.success)
+    return {
+      errors: payloadIsValid.error.errors.map((e) => e.message),
+      ...payloadIsValid,
     };
   return payloadIsValid;
 };
