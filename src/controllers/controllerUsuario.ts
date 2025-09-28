@@ -2,7 +2,7 @@ import env from "../config/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
-import UsuarioRepository from "../models/modelUsuario";
+import UsuarioRepository from "../models/ModelUsuario";
 import {
   validateLoginPayload,
   validateCriarPayload,

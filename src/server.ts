@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import env from "./config/config";
-import routeUsuarios from "./routes/routeUsuario";
+import routeUsuarios from "./routes/RouteUsuario"; 
 import routeMotoristas from "./routes/routeMotorista";
 import { typeDefs } from "./schemas/typeDefs";
 import { resolvers } from "./resolvers/resolvers";

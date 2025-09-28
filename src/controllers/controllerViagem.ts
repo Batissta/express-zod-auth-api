@@ -1,12 +1,12 @@
-import usuarioRepository from "../models/modelUsuario";
-import viagemRepository from "../models/modelViagem";
+import usuarioRepository from "../models/ModelUsuario";
+import viagemRepository from "../models/ModelViagem";
 import { randomUUID } from "node:crypto";
 import {
   validateCriarViagem,
   validateAtualizarViagem,
   validateAdicionarPassageiroParaViagem,
 } from "../validations/viagemZod";
-import motoristaRepository from "../models/modelMotorista";
+import motoristaRepository from "../models/ModelMotorista";
 import { padronizaMotorista } from "../helpers/padronizeMotorista";
 
 export const mutationCreateViagem = async (args: any) => {

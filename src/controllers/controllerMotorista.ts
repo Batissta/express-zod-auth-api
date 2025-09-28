@@ -6,12 +6,12 @@ import {
 } from "../validations/motoristaZod";
 import { eUsuarioTipo, validateCriarPayload } from "../validations/usuarioZod";
 import { randomUUID } from "node:crypto";
-import motoristaRepository from "../models/modelMotorista";
+import motoristaRepository from "../models/ModelMotorista";
 import {
   padronizaMotorista,
   padronizaMotoristas,
 } from "../helpers/padronizeMotorista";
-import usuarioRepository from "../models/modelUsuario";
+import usuarioRepository from "../models/ModelUsuario";
 
 export const criarMotorista = async (req: any, res: any) => {
   try {
